@@ -34,8 +34,8 @@ namespace BotSocialMedia.Services
         {
             var idj = _httpContextAccessor.HttpContext?.User.FindFirst("id")?.Value;
             var role = _httpContextAccessor.HttpContext?.User.FindFirst("role")?.Value;
-            var bot = await _botsRepository.GetByKey(x => x.AccountId.ToString() == idj) ?? throw new HttpException("Bot not found", 404);
-            if (bot.Id != id && role != "admin")
+            var bot = await _botsRepository.GetById(id) ?? throw new HttpException("Bot not found", 404);
+            if (bot.AccountId.ToString() != idj && role != "admin")
                 throw new HttpException("Forbidden: You can only access your own bots", 403);
 
             return bot;

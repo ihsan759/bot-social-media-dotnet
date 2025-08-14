@@ -32,6 +32,20 @@ public class BotController : ControllerBase
         });
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get([FromRoute] string id)
+    {
+        if (!Guid.TryParse(id, out var botId))
+            throw new HttpException("Invalid bot id", 400);
+
+        var bot = await _botService.GetBotById(botId);
+        return Ok(new
+        {
+            status = 200,
+            data = bot
+        });
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> Store([FromForm] BotCreateDto dto)
     {
