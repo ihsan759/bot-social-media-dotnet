@@ -1,0 +1,59 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.rsuser
+*.vscode/
+
+# Test results
+TestResult*/
+*.TestResults/
+
+# Visual Studio
+.vs/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+*.dbmdl
+*.jfm
+
+# Publish outputs
+wwwroot/
+dist/
+build/
+.publish/
+_PublishedWebsites/
+
+# Config
+appsettings.Development.json
+appsettings.json
+
+# Rider IDE
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# JetBrains Rider
+.idea/
+*.sln.iml

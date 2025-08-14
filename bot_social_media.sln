@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bot_social_media", "bot_social_media.csproj", "{CF37B0D2-FD84-48D8-8435-C8C3E9A6E896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bot_social_media.Tests", "bot_social_media.Tests\bot_social_media.Tests.csproj", "{8CEAC65E-B68D-4F94-8C61-801B9A5C967D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF37B0D2-FD84-48D8-8435-C8C3E9A6E896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF37B0D2-FD84-48D8-8435-C8C3E9A6E896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF37B0D2-FD84-48D8-8435-C8C3E9A6E896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF37B0D2-FD84-48D8-8435-C8C3E9A6E896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CEAC65E-B68D-4F94-8C61-801B9A5C967D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CEAC65E-B68D-4F94-8C61-801B9A5C967D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CEAC65E-B68D-4F94-8C61-801B9A5C967D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CEAC65E-B68D-4F94-8C61-801B9A5C967D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
