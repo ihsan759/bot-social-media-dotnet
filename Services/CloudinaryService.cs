@@ -16,27 +16,39 @@ public class CloudinaryService
         _cloudinary = new Cloudinary(account);
     }
 
-    public async Task<string> UploadImageAsync(IFormFile file)
+    public async Task<string> UploadImageAsync(IFormFile file, string folder)
     {
         if (file == null || file.Length == 0)
-            throw new ArgumentException("File is empty");
+            throw new HttpException("File is empty", 400);
 
         await using var stream = file.OpenReadStream();
 
         var uploadParams = new ImageUploadParams
         {
             File = new FileDescription(file.FileName, stream),
-            Folder = "avatars" // Optional: folder in Cloudinary
+            Folder = folder
         };
 
-        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-        return uploadResult.SecureUrl.AbsoluteUri; // Return public URL
+        try
+        {
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.Error != null)
+                throw new HttpException($"Cloudinary upload failed: {uploadResult.Error.Message}", 500);
+
+            return uploadResult.SecureUrl?.AbsoluteUri
+                   ?? throw new HttpException("Cloudinary upload failed: no URL returned", 500);
+        }
+        catch (Exception ex)
+        {
+            throw new HttpException("Image upload failed", 500, ex);
+        }
     }
 
     public async Task<bool> DeleteImageAsync(string publicId)
     {
         if (string.IsNullOrWhiteSpace(publicId))
-            throw new ArgumentException("publicId is required");
+            throw new HttpException("publicId is required", 400);
 
         var deletionParams = new DeletionParams(publicId)
         {
@@ -51,18 +63,18 @@ public class CloudinaryService
     public string ExtractPublicId(string url)
     {
         if (string.IsNullOrEmpty(url))
-            throw new ArgumentException("URL cannot be empty");
+            throw new HttpException("URL cannot be empty", 400);
 
         var marker = "/upload/";
         var startIndex = url.IndexOf(marker);
         if (startIndex == -1)
-            throw new ArgumentException("URL format is invalid");
+            throw new HttpException("URL format is invalid", 400);
 
         startIndex += marker.Length;
 
         var versionEndIndex = url.IndexOf('/', startIndex);
         if (versionEndIndex == -1)
-            throw new ArgumentException("URL format is invalid");
+            throw new HttpException("URL format is invalid", 400);
 
         var pathWithExtension = url.Substring(versionEndIndex + 1);
 
