@@ -55,6 +55,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         // customize the events to handle token validation errors
         options.Events = new JwtBearerEvents
         {
+            OnTokenValidated = context =>
+            {
+                var claims = context.Principal?.Claims;
+
+                var idClaim = claims?.FirstOrDefault(c => c.Type == "id")?.Value;
+                var roleClaim = claims?.FirstOrDefault(c => c.Type == "role")?.Value;
+
+                // Pastikan id ada dan valid Guid
+                if (string.IsNullOrWhiteSpace(idClaim) || !Guid.TryParse(idClaim, out _))
+                {
+                    throw new HttpException("Invalid or missing 'id' claim", StatusCodes.Status401Unauthorized);
+                }
+
+                // Pastikan role ada
+                if (string.IsNullOrWhiteSpace(roleClaim))
+                {
+                    throw new HttpException("Invalid or missing 'role' claim", StatusCodes.Status401Unauthorized);
+                }
+
+                return Task.CompletedTask;
+            },
             OnChallenge = context =>
             {
                 // turn off the default response
