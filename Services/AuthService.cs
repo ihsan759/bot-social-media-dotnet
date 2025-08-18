@@ -73,9 +73,6 @@ public class AuthService
         if (account == null || !Verify(dto.Password, account.Password))
             throw new HttpException("Invalid credentials", 401);
 
-        if (!account.IsVerified)
-            throw new HttpException("Account not verified", 403);
-
         if (account.Status != Status.active)
             throw new HttpException("Account not active", 403);
 
