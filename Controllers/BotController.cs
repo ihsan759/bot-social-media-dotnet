@@ -9,15 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class BotController : ControllerBase
 {
-    private readonly IConfiguration _config;
+
     private readonly BotService _botService;
-    private readonly CloudinaryService _cloudinaryService;
 
-    public BotController(BotService botsService, IConfiguration config, CloudinaryService cloudinaryService)
+
+    public BotController(BotService botsService)
     {
-        _cloudinaryService = cloudinaryService;
-
-        _config = config;
         _botService = botsService;
     }
 
@@ -49,14 +46,8 @@ public class BotController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Store([FromForm] BotCreateDto dto)
     {
-        string? avatarUrl = null;
 
-        if (dto.Avatar != null)
-        {
-            avatarUrl = await _cloudinaryService.UploadImageAsync(dto.Avatar);
-        }
-
-        var bot = await _botService.CreateBot(dto, avatarUrl);
+        var bot = await _botService.CreateBot(dto);
 
         return Ok(new
         {
@@ -72,14 +63,7 @@ public class BotController : ControllerBase
         if (!Guid.TryParse(id, out var botId))
             throw new HttpException("Invalid bot id", 400);
 
-        string? avatarUrl = null;
-
-        if (dto.Avatar != null)
-        {
-            avatarUrl = await _cloudinaryService.UploadImageAsync(dto.Avatar);
-        }
-
-        var bot = await _botService.UpdateBot(botId, dto, avatarUrl);
+        var bot = await _botService.UpdateBot(botId, dto);
 
         return Ok(new
         {
