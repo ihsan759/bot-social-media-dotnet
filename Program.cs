@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BotSocialMedia.Services;
+using Microsoft.AspNetCore.Authorization;
 
 // Erase default claim mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -116,6 +117,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("VerifiedOnly", policy =>
+        policy.Requirements.Add(new VerifiedRequirement()));
+});
+
+builder.Services.AddSingleton<IAuthorizationHandler, VerifiedHandler>();
 
 builder.Services.AddHttpContextAccessor();
 
