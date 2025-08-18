@@ -20,10 +20,14 @@ public class VerifiedHandler : AuthorizationHandler<VerifiedRequirement>
         if (idClaim == null || !Guid.TryParse(idClaim, out var accountId))
             return;
 
-        var account = await _accountRepository.GetById(accountId);
-        if (account != null && account.IsVerified)
+        var isVerified = await _accountRepository.IsAccountVerified(accountId);
+        if (isVerified)
         {
             context.Succeed(requirement);
+        }
+        else
+        {
+            throw new HttpException("Your account is not verified", StatusCodes.Status403Forbidden);
         }
     }
 }
