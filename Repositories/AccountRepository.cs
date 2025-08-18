@@ -12,9 +12,5 @@ namespace BotSocialMedia.Repositories
         {
         }
 
-        public async Task<Accounts?> GetAccountByEmail(string email)
-        {
-            return await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
-        }
     }
 }
