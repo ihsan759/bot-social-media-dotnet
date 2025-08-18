@@ -118,13 +118,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddScoped<IAuthorizationHandler, VerifiedHandler>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("VerifiedOnly", policy =>
         policy.Requirements.Add(new VerifiedRequirement()));
 });
 
-builder.Services.AddSingleton<IAuthorizationHandler, VerifiedHandler>();
 
 builder.Services.AddHttpContextAccessor();
 
