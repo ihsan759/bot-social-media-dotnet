@@ -122,5 +122,27 @@ public class AuthController : ControllerBase
         });
     }
 
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+    {
+        await _authService.ForgotPassword(dto.Email);
+        return Ok(new
+        {
+            status = 200,
+            message = "Password reset email sent"
+        });
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+    {
+        await _authService.ResetPassword(dto);
+        return Ok(new
+        {
+            status = 200,
+            message = "Password has been reset successfully"
+        });
+    }
+
 
 }

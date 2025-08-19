@@ -100,40 +100,60 @@ public class AuthService
     {
         var account = await _accountRepository.GetByKey(x => x.Email == email);
         if (account == null) throw new HttpException("User not found", 404);
-        var resetToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
-        var resetTokenExpiry = DateTime.UtcNow.AddHours(1); // Token valid for 1 hour
+        var bytes = RandomNumberGenerator.GetBytes(16); // 128-bit
+        var resetToken = Convert.ToHexString(bytes);
+        var resetTokenExpiry = DateTime.UtcNow.AddMinutes(5); // Token valid for 1 hour
         var resetUrl = $"{_config["App:BackendUrl"]}/api/auth/reset-password?token={resetToken}";
         var emailBody = $@"
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                                <meta charset='UTF-8'>
-                                <title>Reset Password Akun QontrolBot</title>
-                            </head>
-                            <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; color: #333;'>
-                                <div style='max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
-                                    <h2 style='color: #4CAF50;'>Permintaan Reset Password</h2>
-                                    <p>Halo <strong>{account.Name}</strong>,</p>
-                                    <p>Untuk mereset password Anda, silakan klik tombol di bawah ini:</p>
-                                    <div style='text-align: center; margin: 30px 0;'>
-                                        <a href='{resetUrl}' style='display: inline-block; padding: 12px 24px; font-size: 16px; color: white; background-color: #4CAF50; border-radius: 5px; text-decoration: none;'>Reset Password</a>
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset='UTF-8'>
+                            <title>Reset Password Akun QontrolBot</title>
+                        </head>
+                        <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; color: #333;'>
+                            <div style='max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
+                                <h2 style='color: #4CAF50;'>Permintaan Reset Password</h2>
+                                <p>Halo <strong>{account.Name}</strong>,</p>
+                                <p>Untuk mereset password akun Anda, silakan gunakan token berikut:</p>
+                                <div style='text-align: center; margin: 30px 0;'>
+                                    <div style='display: inline-block; padding: 12px 24px; font-size: 18px; font-weight: bold; color: #333; background-color: #f0f0f0; border-radius: 5px; border: 1px solid #ccc;'>
+                                        {resetToken}
                                     </div>
-                                    <p style='font-size: 14px;'>
-                                        Tautan ini berlaku selama <strong>1 jam</strong> sejak email ini dikirim.
-                                        Jika Anda tidak merasa melakukan reset password di QontrolBot, abaikan email ini.
-                                    </p>
-                                    <hr style='margin: 30px 0;'>
-                                    <p style='font-size: 12px; color: #888;'>
-                                        Email ini dikirim secara otomatis oleh sistem QontrolBot. Mohon jangan membalas email ini.
-                                    </p>
                                 </div>
-                            </body>
-                            </html>";
+                                <p style='font-size: 14px;'>
+                                    Token ini hanya berlaku selama <strong>5 menit</strong> sejak email ini dikirim.<br/>
+                                    Masukkan token tersebut pada halaman reset password di aplikasi QontrolBot.
+                                </p>
+                                <hr style='margin: 30px 0;'>
+                                <p style='font-size: 12px; color: #888;'>
+                                    Email ini dikirim secara otomatis oleh sistem QontrolBot. Mohon jangan membalas email ini.
+                                </p>
+                            </div>
+                        </body>
+                        </html>";
+
+
+        await _accountRepository.Update(account.Id, acc =>
+        {
+            acc.ResetPasswordToken = resetToken;
+            acc.ResetPasswordTokenExpiry = resetTokenExpiry;
+            acc.UpdatedAt = DateTime.UtcNow;
+        });
+        try
+        {
+            await _emailService.SendEmailAsync(account.Email, "Konfirmasi Pendaftaran Akun QontrolBot", emailBody);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Email send failed: {ex.Message}");
+            throw;
+        }
     }
 
-    public async Task ResetPassword(string token, string newPassword)
+    public async Task ResetPassword(ResetPasswordDto dto)
     {
-        var account = await _accountRepository.GetByKey(a => a.ResetPasswordToken == token);
+        var account = await _accountRepository.GetByKey(a => a.Email == dto.Email && a.ResetPasswordToken == dto.Token);
 
         if (account == null)
             throw new HttpException("Invalid Token", 400);
@@ -143,7 +163,7 @@ public class AuthService
 
         await _accountRepository.Update(account.Id, acc =>
         {
-            acc.Password = HashPassword(newPassword);
+            acc.Password = HashPassword(dto.NewPassword);
             acc.ResetPasswordToken = null;
             acc.ResetPasswordTokenExpiry = null;
             acc.UpdatedAt = DateTime.UtcNow;
