@@ -5,8 +5,6 @@ namespace BotSocialMedia.Dtos
 {
     public class BotCreateDto
     {
-        [Required(ErrorMessage = "AccountId is required.")]
-        public Guid AccountId { get; set; }
         public IFormFile? Avatar { get; set; } = null;
 
         [Required(ErrorMessage = "Name is required.")]
