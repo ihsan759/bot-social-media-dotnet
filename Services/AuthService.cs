@@ -41,6 +41,7 @@ public class AuthService
             Role = Role.USER,
             Status = Status.active,
             IsVerified = false,
+            BirthDate = dto.BirthDate,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };

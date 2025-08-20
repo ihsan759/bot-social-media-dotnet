@@ -17,7 +17,7 @@ public class RegisterDto
     [EmailAddress(ErrorMessage = "Must be a valid email address")]
     public string Email { get; set; } = default!;
 
-    [Required]
+    [Required(ErrorMessage = "Phone is required.")]
     [RegularExpression(@"^(?:\+62|0)?[-. ]?\(?([0-9]{2,4})\)?[-. ]?([0-9]{3,4})[-. ]?([0-9]{4,6})$", ErrorMessage = "Must be a valid phone number")]
     public string Phone { get; set; } = default!;
 
@@ -25,4 +25,7 @@ public class RegisterDto
     [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
     public string Password { get; set; } = default!;
 
+    [Required(ErrorMessage = "BirthDate is required")]
+    [DataType(DataType.Date, ErrorMessage = "BirthDate must be a valid date")]
+    public DateOnly BirthDate { get; set; }
 }
