@@ -167,6 +167,13 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IBotRepository, BotRepository>();
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
