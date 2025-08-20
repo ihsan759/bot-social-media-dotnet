@@ -17,7 +17,7 @@ namespace BotSocialMedia.Dtos
         public DateTime? ExpiresAt { get; set; }
 
         [Required(ErrorMessage = "Phone is required.")]
-        [Phone(ErrorMessage = "Phone must be a valid phone number.")]
+        [RegularExpression(@"^(?:\+62|0)?[-. ]?\(?([0-9]{2,4})\)?[-. ]?([0-9]{3,4})[-. ]?([0-9]{4,6})$", ErrorMessage = "Must be a valid phone number")]
         public string Phone { get; set; } = default!;
     }
 }
