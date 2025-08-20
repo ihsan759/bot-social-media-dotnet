@@ -4,8 +4,9 @@ namespace BotSocialMedia.Repositories.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<List<TResult>> GetAll<TResult>(Expression<Func<T, bool>>? predicate = null, Func<IQueryable<T>, IQueryable<T>>? include = null, Expression<Func<T, TResult>>? selector = null);
+        Task<List<TResult>> GetAll<TResult>(Expression<Func<T, bool>>? predicate = null, Func<IQueryable<T>, IQueryable<T>>? include = null, Expression<Func<T, TResult>>? selector = null, int pageNumber = 1, int pageSize = 50);
         Task<T?> GetById(object id);
+        Task<TResult?> GetById<TResult>(object id, Func<IQueryable<T>, IQueryable<T>>? include = null, Expression<Func<T, TResult>>? selector = null);
         Task<T?> GetByKey(Expression<Func<T, bool>> predicate);
         Task<List<T>> GetManyByKey(Expression<Func<T, bool>> predicate);
         Task<T> Create(T entity);
