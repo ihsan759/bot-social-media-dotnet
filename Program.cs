@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BotSocialMedia.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json.Serialization;
 
 // Erase default claim mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -25,7 +26,10 @@ builder.Services.AddControllers();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        // case-insensitive enum binding
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: false)
+        );
     });
 
 var config = builder.Configuration;
@@ -34,6 +38,8 @@ builder.Services.AddScoped<JwtHandling>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<BotService>();
+builder.Services.AddScoped<AccountService>();
+
 
 // Tambahkan Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -166,6 +172,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IBotRepository, BotRepository>();
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
