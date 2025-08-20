@@ -1,5 +1,6 @@
 using BotSocialMedia.Dtos;
 using BotSocialMedia.Services;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,13 @@ public class BotController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 50)
     {
-        var bots = await _botService.GetAllBots();
+        var bots = await _botService.GetAllBots(pageNumber, pageSize);
         return Ok(new
         {
             status = 200,
+            PageNumber = pageNumber,
             data = bots
         });
     }
@@ -35,7 +37,7 @@ public class BotController : ControllerBase
         if (!Guid.TryParse(id, out var botId))
             throw new HttpException("Invalid bot id", 400);
 
-        var bot = await _botService.GetBotById(botId);
+        var bot = await _botService.GetDetail(botId);
         return Ok(new
         {
             status = 200,
