@@ -10,6 +10,7 @@ public class Accounts
     public string Email { get; set; } = default!;
     public string Phone { get; set; } = default!;
     public string Name { get; set; } = default!;
+    public DateOnly BirthDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
     public string Password { get; set; } = default!;
     public Role Role { get; set; } = Role.USER;
     public bool IsVerified { get; set; } = false;
