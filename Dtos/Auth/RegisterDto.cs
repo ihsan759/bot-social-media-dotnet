@@ -2,8 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 public class RegisterDto
 {
-    [Url(ErrorMessage = "Must be a valid URL")]
-    public string? AvatarUrl { get; set; }
 
     [Required]
     [MinLength(1, ErrorMessage = "Name must contain at least 1 character")]
