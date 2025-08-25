@@ -2,7 +2,6 @@
 using BotSocialMedia.Data;
 using BotSocialMedia.Models;
 using BotSocialMedia.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace BotSocialMedia.Repositories
 {
