@@ -20,7 +20,7 @@ public class VerifiedHandler : AuthorizationHandler<VerifiedRequirement>
         if (idClaim == null || !Guid.TryParse(idClaim, out var accountId))
             return;
 
-        var isVerified = await _accountRepository.IsAccountVerified(accountId);
+        var isVerified = await _accountRepository.Exists(x => x.Id == accountId && x.IsVerified);
         if (isVerified)
         {
             context.Succeed(requirement);
